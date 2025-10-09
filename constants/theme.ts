@@ -1,3 +1,18 @@
+export const theme = {
+  colors: {
+    primary: "#FFD700",
+    secondary: "#003366",
+    background: "#FFFDF8",
+    text: "#333",
+    accent: "#F59E0B",
+  },
+  spacing: {
+    s: 8,
+    m: 16,
+    l: 24,
+  },
+  borderRadius: 16,
+};
 /**
  * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.

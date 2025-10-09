@@ -1,0 +1,47 @@
+import * as FileSystem from "expo-file-system";
+
+export type Book = {
+  id: string;
+  name: string;
+  testament: "VT" | "NT";
+  chaptersCount: number;
+  sample?: { number: number; verses: string[] }[];
+};
+
+export const BOOKS: Book[] = [
+  {
+    id: "geneza",
+    name: "Geneza",
+    testament: "VT",
+    chaptersCount: 50,
+    sample: [
+      {
+        number: 1,
+        verses: [
+          "La început, Dumnezeu a făcut cerurile și pământul.",
+          "Pământul era pustiu și gol; întuneric era deasupra adâncului, iar Duhul lui Dumnezeu Se purta pe deasupra apelor.",
+          "Dumnezeu a zis: «Să fie lumină!» și a fost lumină."
+        ],
+      },
+    ],
+  },
+];
+
+export async function loadFullBook(id: string) {
+  try {
+    const localUri = FileSystem.bundleDirectory + "constants/biblia_full.json";
+    const content = await FileSystem.readAsStringAsync(localUri, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+    const json = JSON.parse(content);
+    return json[id];
+  } catch (error) {
+    console.error("❌ Eroare la citirea biblia_full.json:", error);
+    return null;
+  }
+}
+
+export function getBookById(id: string) {
+  return BOOKS.find((b) => b.id.toLowerCase() === id.toLowerCase());
+}
+

@@ -1,0 +1,223 @@
+{
+  "geneza": {
+    "id": "geneza",
+    "name": "Geneza",
+    "chapters": {
+      "1": [
+        "La început, Dumnezeu a făcut cerurile și pământul.",
+        "Pământul era pustiu și gol, și întuneric era peste fața adâncului.",
+        "Dumnezeu a zis: Să fie lumină! Și a fost lumină."
+      ],
+      "2": [
+        "Dumnezeu a sfârșit lucrarea Sa și S-a odihnit în ziua a șaptea.",
+        "A făcut pe om din țărâna pământului și a suflat în el suflare de viață."
+      ],
+      "3": [
+        "Șarpele a ispitit pe femeie în grădina Edenului.",
+        "Omul și femeia au mâncat din rodul oprit și au fost izgoniți."
+      ]
+    }
+  },
+  "exodul": {
+    "id": "exodul",
+    "name": "Exodul",
+    "chapters": {
+      "1": [
+        "Fiii lui Israel s-au înmulțit în Egipt.",
+        "Faraon a poruncit ca toți pruncii de parte bărbătească să fie aruncați în Nil."
+      ],
+      "2": [
+        "S-a născut Moise și mama sa l-a ascuns trei luni.",
+        "Fiica lui Faraon l-a găsit și l-a crescut ca pe fiul ei."
+      ],
+      "3": [
+        "Dumnezeu i S-a arătat lui Moise în rugul aprins.",
+        "L-a trimis să elibereze poporul Său din Egipt."
+      ]
+    }
+  },
+  "psalmi": {
+    "id": "psalmi",
+    "name": "Psalmi",
+    "chapters": {
+      "22": [
+        "Domnul este Păstorul meu; nu voi duce lipsă de nimic.",
+        "El mă paște în pășuni verzi și mă duce la ape de odihnă."
+      ],
+      "50": [
+        "Miluiește-mă, Dumnezeule, după mare mila Ta.",
+        "Șterge fărădelegile mele după mulțimea îndurărilor Tale."
+      ],
+      "142": [
+        "Doamne, auzi rugăciunea mea, ascultă cererea mea.",
+        "Duhul Tău cel bun să mă povățuiască la pământul dreptății."
+      ]
+    }
+  },
+  "proverbe": {
+    "id": "proverbe",
+    "name": "Proverbe",
+    "chapters": {
+      "1": [
+        "Frica de Domnul este începutul înțelepciunii.",
+        "Fiule, ascultă învățăturile tatălui tău și nu lepăda povățuirile mamei tale."
+      ],
+      "3": [
+        "Încrede-te în Domnul din toată inima ta și nu te bizui pe priceperea ta.",
+        "Recunoaște-L în toate căile tale și El îți va netezi cărările."
+      ]
+    }
+  },
+  "isaia": {
+    "id": "isaia",
+    "name": "Isaia",
+    "chapters": {
+      "6": [
+        "L-am văzut pe Domnul șezând pe un scaun de domnie înalt și măreț.",
+        "Serafimii strigau: Sfânt, Sfânt, Sfânt este Domnul Savaot!"
+      ],
+      "40": [
+        "Cei ce nădăjduiesc în Domnul își înnoiesc puterea.",
+        "Se ridică pe aripi ca vulturii, aleargă și nu obosesc."
+      ]
+    }
+  },
+  "matei": {
+    "id": "matei",
+    "name": "Evanghelia după Matei",
+    "chapters": {
+      "5": [
+        "Fericiți cei săraci cu duhul, că a lor este împărăția cerurilor.",
+        "Fericiți cei curați cu inima, că aceia vor vedea pe Dumnezeu."
+      ],
+      "6": [
+        "Tatăl vostru știe de ce aveți trebuință mai înainte ca să-I cereți voi.",
+        "Căutați mai întâi împărăția lui Dumnezeu și dreptatea Lui."
+      ],
+      "7": [
+        "Nu judecați, ca să nu fiți judecați.",
+        "Toate câte voiți să vă facă vouă oamenii, faceți-le și voi lor."
+      ]
+    }
+  },
+  "marcu": {
+    "id": "marcu",
+    "name": "Evanghelia după Marcu",
+    "chapters": {
+      "1": [
+        "Începutul Evangheliei lui Iisus Hristos, Fiul lui Dumnezeu.",
+        "Pocăiți-vă, că s-a apropiat împărăția cerurilor."
+      ],
+      "4": [
+        "Împărăția lui Dumnezeu este ca un grăunte de muștar.",
+        "Cine are urechi de auzit să audă."
+      ]
+    }
+  },
+  "luca": {
+    "id": "luca",
+    "name": "Evanghelia după Luca",
+    "chapters": {
+      "1": [
+        "Îngerul Gavriil a fost trimis la Fecioara Maria.",
+        "Ea a zis: Iată roaba Domnului, fie mie după cuvântul tău."
+      ],
+      "15": [
+        "Un om avea doi fii. Fiul cel tânăr a plecat departe.",
+        "Când și-a venit în fire, s-a întors la tatăl său și a fost primit cu bucurie."
+      ]
+    }
+  },
+  "ioan": {
+    "id": "ioan",
+    "name": "Evanghelia după Ioan",
+    "chapters": {
+      "1": [
+        "La început era Cuvântul și Cuvântul era la Dumnezeu.",
+        "Toate prin El s-au făcut, și fără El nimic nu s-a făcut."
+      ],
+      "3": [
+        "Atât de mult a iubit Dumnezeu lumea, încât pe Fiul Său Cel Unul-Născut L-a dat.",
+        "Cine crede în El nu este judecat, ci are viață veșnică."
+      ],
+      "14": [
+        "Eu sunt Calea, Adevărul și Viața.",
+        "Nimeni nu vine la Tatăl decât prin Mine."
+      ]
+    }
+  },
+  "faptele": {
+    "id": "faptele",
+    "name": "Faptele Apostolilor",
+    "chapters": {
+      "2": [
+        "S-a coborât Duhul Sfânt peste apostoli.",
+        "Toți au început să vorbească în alte limbi, după cum le dădea Duhul."
+      ],
+      "9": [
+        "Saul mergea spre Damasc și o lumină din cer l-a învăluit.",
+        "A auzit un glas: Saule, Saule, de ce Mă prigonești?"
+      ]
+    }
+  },
+  "romani": {
+    "id": "romani",
+    "name": "Epistola către Romani",
+    "chapters": {
+      "8": [
+        "Nici moartea, nici viața, nici îngerii, nici altă făptură nu ne vor despărți de dragostea lui Hristos.",
+        "Duhul Însuși mijlocește pentru noi cu suspine negrăite."
+      ],
+      "12": [
+        "Să nu vă potriviți chipului veacului acestuia.",
+        "Biruiți răul prin bine."
+      ]
+    }
+  },
+  "apocalipsa": {
+    "id": "apocalipsa",
+    "name": "Apocalipsa",
+    "chapters": {
+      "1": [
+        "Revelația lui Iisus Hristos, pe care i-a dat-o Dumnezeu.",
+        "El este Alfa și Omega, începutul și sfârșitul."
+      ],
+      "21": [
+        "Am văzut un cer nou și un pământ nou.",
+        "Dumnezeu va șterge orice lacrimă din ochii lor."
+      ]
+    }
+  }
+}
+{
+  "geneza": {
+    "chapters": {
+      "1": [
+        "La început, Dumnezeu a făcut cerurile și pământul.",
+        "Pământul era pustiu și gol, întuneric era peste adânc, și Duhul lui Dumnezeu Se mișca pe deasupra apelor.",
+        "Dumnezeu a zis: Să fie lumină! Și a fost lumină."
+      ],
+      "2": [
+        "Așa au fost sfârșite cerurile și pământul și toată oștirea lor.",
+        "Dumnezeu a binecuvântat ziua a șaptea și a sfințit-o.",
+        "Domnul Dumnezeu a făcut pământul și cerurile."
+      ],
+      "3": [
+        "Șarpele era mai șiret decât toate fiarele câmpului.",
+        "Femeia a luat din rodul pomului și a mâncat.",
+        "Domnul Dumnezeu a zis: Unde ești?"
+      ],
+      "4": [
+        "Adam a cunoscut-o pe Eva, femeia sa; și ea a născut pe Cain.",
+        "Domnul a privit cu plăcere la Abel și la jertfa lui.",
+        "Sângele fratelui tău strigă către Mine din pământ!"
+      ],
+      "5": [
+        "Aceasta este cartea neamurilor lui Adam.",
+        "Toate zilele lui Adam au fost de 930 de ani; apoi a murit.",
+        "Noe s-a născut din Lameh."
+      ]
+    }
+  }
+}
+
