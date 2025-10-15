@@ -1,171 +1,273 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Modal } from "react-native";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import { sarbatoriMap, getSarbatoare } from "../../constants/sarbatori";
+import { Ionicons } from "@expo/vector-icons";
+import { useState, useMemo } from "react";
+import { SARBATORI } from "../constants/sarbatori";
 
 export default function CalendarScreen() {
   const router = useRouter();
-  const today = new Date();
-  const [luna, setLuna] = useState(today.getMonth());
-  const [an, setAn] = useState(today.getFullYear());
-  const [selectedDay, setSelectedDay] = useState<{ date: string; sarbatoare?: string } | null>(null);
+  const [luna, setLuna] = useState(new Date().getMonth());
+  const [an, setAn] = useState(new Date().getFullYear());
 
   const luni = [
     "Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
-    "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"
+    "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie",
   ];
 
-  const daysInMonth = new Date(an, luna + 1, 0).getDate();
-  const firstDay = new Date(an, luna, 1).getDay();
-  const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const sarbatoriSet = useMemo(() => new Set(SARBATORI.map(s => s.date)), []);
+  const sarbatoriMap = useMemo(() => new Map(SARBATORI.map(s => [s.date, s.name])), []);
 
-  const handlePrevMonth = () => {
-    if (luna === 0) {
-      setLuna(11);
-      setAn(an - 1);
-    } else setLuna(luna - 1);
-  };
+  const fmtDate = (y: number, m: number, d: number) =>
+    `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-  const handleNextMonth = () => {
-    if (luna === 11) {
-      setLuna(0);
-      setAn(an + 1);
-    } else setLuna(luna + 1);
-  };
+  const zileInLuna = new Date(an, luna + 1, 0).getDate();
+  const primaZi = new Date(an, luna, 1).getDay();
+  const offset = primaZi === 0 ? 6 : primaZi - 1;
 
-  const renderItem = ({ item }: { item: number }) => {
-    const dateStr = `${an}-${String(luna + 1).padStart(2, "0")}-${String(item).padStart(2, "0")}`;
-    const sarbatoare = getSarbatoare(dateStr);
+  const cells: (number | null)[] = Array(offset).fill(null).concat(
+    Array.from({ length: zileInLuna }, (_, i) => i + 1)
+  );
+  while (cells.length % 7 !== 0) cells.push(null);
 
-    return (
-      <TouchableOpacity
-        style={[
-          styles.dayCard,
-          sarbatoare ? styles.daySarbatoare : null
-        ]}
-        onPress={() => setSelectedDay({ date: dateStr, sarbatoare: sarbatoare?.sarbatoare })}
-      >
-        <Text style={[styles.dayNumber, sarbatoare ? styles.dayNumberSarbatoare : null]}>
-          {item}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
+  const sarbatoriLuna = SARBATORI.filter((s) => {
+    const [y, m] = s.date.split("-").map(Number);
+    return y === an && m === luna + 1;
+  });
 
   return (
-    <View style={styles.container}>
-      {/* 🔙 Bara sus */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.inapoi}>← Înapoi</Text>
-        </TouchableOpacity>
+    <View style={{ flex: 1, backgroundColor: "#FFF8E1" }}>
+      {/* 🔹 Bara albastră + buton galben */}
+      <View
+        style={{
+          backgroundColor: "#1E2A78",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 15,
+          paddingVertical: 10,
+          elevation: 3,
+        }}
+      >
+        <Pressable
+          onPress={() => router.back()}
+          style={{
+            backgroundColor: "#F9C846",
+            padding: 6,
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+        </Pressable>
+        <Text style={{ fontSize: 18, fontWeight: "700", color: "#fff" }}>
+          Calendar Ortodox
+        </Text>
+        <View style={{ width: 40 }} />
+      </View>
 
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={styles.titlu}>📅 Calendar Creștin Ortodox {an}</Text>
+      {/* 🔽 Conținutul calendarului */}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingHorizontal: 18,
+          paddingTop: 25,
+          paddingBottom: 40,
+        }}
+      >
+        {/* 📅 Titlu */}
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 24,
+            fontWeight: "800",
+            color: "#1E2A78",
+            marginBottom: 8,
+          }}
+        >
+          Calendar Creștin Ortodox
+        </Text>
+
+        <View
+          style={{
+            height: 3,
+            backgroundColor: "#F9C846",
+            width: "40%",
+            alignSelf: "center",
+            borderRadius: 2,
+            marginBottom: 15,
+          }}
+        />
+
+        {/* Luna curentă */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 16,
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              if (luna === 0) {
+                setLuna(11);
+                setAn(an - 1);
+              } else setLuna(luna - 1);
+            }}
+            style={{ padding: 6 }}
+          >
+            <Ionicons name="chevron-back-circle" size={36} color="#1E2A78" />
+          </Pressable>
+
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "700",
+              color: "#1E2A78",
+              marginHorizontal: 12,
+            }}
+          >
+            {luni[luna]} {an}
+          </Text>
+
+          <Pressable
+            onPress={() => {
+              if (luna === 11) {
+                setLuna(0);
+                setAn(an + 1);
+              } else setLuna(luna + 1);
+            }}
+            style={{ padding: 6 }}
+          >
+            <Ionicons name="chevron-forward-circle" size={36} color="#1E2A78" />
+          </Pressable>
         </View>
 
-        {/* spațiu echilibrat */}
-        <View style={{ width: 60 }} />
-      </View>
-
-      {/* 🔄 Selector lună */}
-      <View style={styles.monthNav}>
-        <TouchableOpacity onPress={handlePrevMonth}>
-          <Text style={styles.arrow}>◀</Text>
-        </TouchableOpacity>
-        <Text style={styles.month}>{luni[luna]}</Text>
-        <TouchableOpacity onPress={handleNextMonth}>
-          <Text style={styles.arrow}>▶</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* 🔹 Zile */}
-      <FlatList
-        data={daysArray}
-        numColumns={7}
-        keyExtractor={(item) => item.toString()}
-        renderItem={renderItem}
-        contentContainerStyle={styles.grid}
-      />
-
-      {/* 🪔 Popup sărbătoare */}
-      <Modal visible={!!selectedDay} transparent animationType="fade">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>📖 {selectedDay?.date}</Text>
-            <Text style={styles.modalText}>
-              {selectedDay?.sarbatoare ?? "Nicio sărbătoare importantă în această zi."}
+        {/* 🗓️ Zilele săptămânii */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 8,
+            paddingHorizontal: 4,
+          }}
+        >
+          {["L", "Ma", "Mi", "J", "V", "S", "D"].map((zi) => (
+            <Text
+              key={zi}
+              style={{
+                width: "14.2857%",
+                textAlign: "center",
+                fontWeight: "700",
+                color: "#1E2A78",
+              }}
+            >
+              {zi}
             </Text>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedDay(null)}>
-              <Text style={styles.closeButtonText}>Închide</Text>
-            </TouchableOpacity>
-          </View>
+          ))}
         </View>
-      </Modal>
+
+        {/* 🔢 Zilele lunii */}
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {cells.map((zi, idx) => {
+            const isEmpty = zi === null;
+            const data = !isEmpty ? fmtDate(an, luna, zi!) : "";
+            const isHoliday = !isEmpty && sarbatoriSet.has(data);
+
+            return (
+              <View
+                key={idx}
+                style={{
+                  width: "14.2857%",
+                  aspectRatio: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 10,
+                  borderRadius: 8,
+                  backgroundColor: isHoliday ? "#FFECEC" : "transparent",
+                  borderWidth: isHoliday ? 1 : 0,
+                  borderColor: isHoliday ? "#B22222" : "transparent",
+                  opacity: isEmpty ? 0 : 1,
+                }}
+              >
+                {!isEmpty && (
+                  <Text
+                    style={{
+                      fontWeight: "600",
+                      color: isHoliday ? "#B22222" : "#1E2A78",
+                      fontSize: 16,
+                      marginTop: -4,
+                    }}
+                  >
+                    {zi}
+                  </Text>
+                )}
+              </View>
+            );
+          })}
+        </View>
+
+        {/* ✨ Linie aurie */}
+        <View
+          style={{
+            height: 3,
+            backgroundColor: "#F9C846",
+            width: "50%",
+            alignSelf: "center",
+            borderRadius: 2,
+            marginTop: -80,
+            marginBottom: 30,
+          }}
+        />
+
+        {/* 🕊️ Lista sărbătorilor */}
+        <View
+          style={{
+            backgroundColor: "rgba(255,255,255,0.95)",
+            borderRadius: 12,
+            padding: 14,
+            borderWidth: 1,
+            borderColor: "#F9C846",
+            shadowColor: "#000",
+            shadowOpacity: 0.05,
+            shadowRadius: 4,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "700",
+              textAlign: "center",
+              color: "#1E2A78",
+              marginBottom: 10,
+            }}
+          >
+            Sărbători în {luni[luna]} {an}
+          </Text>
+
+          {sarbatoriLuna.length === 0 ? (
+            <Text style={{ textAlign: "center", color: "#555" }}>
+              Nu există sărbători în această lună.
+            </Text>
+          ) : (
+            sarbatoriLuna.map((s, i) => (
+              <Text
+                key={i}
+                style={{
+                  fontSize: 15,
+                  color: "#B22222",
+                  textAlign: "center",
+                  marginVertical: 4,
+                  fontWeight: "500",
+                }}
+              >
+                {new Date(s.date).getDate()} {luni[new Date(s.date).getMonth()]} – {s.name}
+              </Text>
+            ))
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#faf8f5", paddingTop: 50 },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    marginBottom: 15,
-  },
-  inapoi: { fontSize: 16, color: "#007AFF", fontWeight: "600" },
-  titlu: { fontSize: 20, fontWeight: "700", color: "#4B5563", textAlign: "center" },
-  monthNav: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  arrow: { fontSize: 22, color: "#374151", paddingHorizontal: 20 },
-  month: { fontSize: 18, fontWeight: "600", color: "#374151" },
-  grid: { alignItems: "center" },
-  dayCard: {
-    width: 45,
-    height: 45,
-    margin: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  daySarbatoare: {
-    backgroundColor: "#ffecec",
-    borderWidth: 1,
-    borderColor: "#ffb3b3",
-  },
-  dayNumber: { fontSize: 16, color: "#374151" },
-  dayNumberSarbatoare: { color: "#D32F2F", fontWeight: "700" },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 15,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  modalText: { fontSize: 16, color: "#444", textAlign: "center", marginBottom: 20 },
-  closeButton: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-  closeButtonText: { color: "white", fontWeight: "600" },
-});

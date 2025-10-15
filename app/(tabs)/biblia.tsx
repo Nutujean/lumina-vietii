@@ -1,8 +1,16 @@
-// app/(tabs)/biblia.tsx
 import React, { useMemo, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import { BOOKS } from "../../constants/biblia";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function BibliaIndex() {
   const router = useRouter();
@@ -11,31 +19,39 @@ export default function BibliaIndex() {
   const booksFiltered = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) return BOOKS;
-    return BOOKS.filter(b => b.name.toLowerCase().includes(term) || b.id.toLowerCase().includes(term));
+    return BOOKS.filter(
+      (b) =>
+        b.name.toLowerCase().includes(term) ||
+        b.id.toLowerCase().includes(term)
+    );
   }, [q]);
 
   return (
     <View style={styles.container}>
-      {/* 🔙 Bara de sus */}
-      <View style={styles.headerBar}>
-       <Text style={styles.backButton} onPress={() => router.back()}>
-          ← Înapoi
-        </Text>
-        <Text style={styles.headerTitle}>📖 Biblia</Text>
+      {/* 🔹 Bara albastră identică cu celelalte pagini */}
+      <View style={styles.header}>
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+        </Pressable>
+        <Text style={styles.headerTitle}>Biblia</Text>
+        <View style={{ width: 40 }} />
       </View>
 
+      {/* 🔍 Căutare */}
       <TextInput
         placeholder="Caută carte (ex: Geneza, Matei)..."
         value={q}
         onChangeText={setQ}
         style={styles.search}
         returnKeyType="search"
+        placeholderTextColor="#777"
       />
 
+      {/* 📖 Lista cărților */}
       <FlatList
         data={booksFiltered}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={{ padding: 16, paddingBottom: 30 }}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
@@ -44,7 +60,10 @@ export default function BibliaIndex() {
             <View>
               <Text style={styles.bookName}>{item.name}</Text>
               <Text style={styles.meta}>
-                {item.testament === "VT" ? "Vechiul Testament" : "Noul Testament"} • {item.chaptersCount} capitole
+                {item.testament === "VT"
+                  ? "Vechiul Testament"
+                  : "Noul Testament"}{" "}
+                • {item.chaptersCount} capitole
               </Text>
             </View>
           </TouchableOpacity>
@@ -56,38 +75,45 @@ export default function BibliaIndex() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFDF8" },
-  headerBar: {
+  container: { flex: 1, backgroundColor: "#FFF8E1" },
+
+  // 🔵 Bara albastră cu buton galben
+  header: {
+    backgroundColor: "#1E2A78",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    elevation: 3,
   },
   backButton: {
-    fontSize: 18,
-    color: "#9A3412",
-    fontWeight: "600",
-    marginRight: 10,
+    backgroundColor: "#F9C846",
+    padding: 6,
+    borderRadius: 50,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: "700",
-    color: "#9A3412",
+    color: "#fff",
   },
+
+  // 🔍 Căutare
   search: {
     marginHorizontal: 16,
+    marginTop: 12,
     padding: 12,
     borderRadius: 10,
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#eee",
-    marginBottom: 8,
+    fontSize: 15,
+    color: "#333",
   },
+
+  // 📖 Card carte biblică
   card: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 12,
     shadowColor: "#000",
@@ -95,6 +121,14 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
-  bookName: { fontSize: 18, fontWeight: "600", color: "#333" },
-  meta: { marginTop: 6, color: "#666", fontSize: 13 },
+  bookName: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#1E2A78",
+  },
+  meta: {
+    marginTop: 6,
+    color: "#555",
+    fontSize: 13,
+  },
 });

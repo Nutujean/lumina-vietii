@@ -1,65 +1,156 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
-import * as SecureStore from "expo-secure-store";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
-import { apiPost } from "../utils/api";;
+import * as SecureStore from "expo-secure-store";
+
+const API_URL = "https://lumina-vietii-backend.onrender.com/api/users/register";
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!email || !password) {
-      Alert.alert("Atenție", "Completează toate câmpurile.");
+    if (!email || !password || !confirm) {
+      Alert.alert("Eroare", "Te rugăm să completezi toate câmpurile.");
       return;
     }
 
-    const res = await apiPost("/auth/register", { name, email, password });
-    if (res?.token) {
-      await SecureStore.setItemAsync("token", res.token);
-      await SecureStore.setItemAsync("user", JSON.stringify(res.user));
-      Alert.alert("Succes", "Cont creat cu succes!");
-      router.replace("/(tabs)/index");
-    } else {
-      Alert.alert("Eroare", res?.message || "Nu s-a putut crea contul.");
+    if (password !== confirm) {
+      Alert.alert("Eroare", "Parolele nu coincid.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      console.log("🔹 Răspuns înregistrare:", data);
+
+      if (!res.ok) {
+        throw new Error(data.message || "Eroare la înregistrare.");
+      }
+
+      // ✅ Salvăm token + email pentru sesiunea curentă
+      await SecureStore.setItemAsync("token", data.token);
+      await SecureStore.setItemAsync("userEmail", data.email);
+
+      Alert.alert("Cont creat cu succes!", "Bine ai venit în Lumina Vieții!");
+      router.push("/(tabs)/index"); // redirecționează spre pagina principală
+    } catch (err: any) {
+      Alert.alert("Eroare", err.message || "Nu s-a putut crea contul.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <ScrollView className="flex-1 bg-white p-5">
-      <Text className="text-2xl font-bold mb-4 text-center">Creează un cont</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Creează un cont</Text>
 
       <TextInput
-        placeholder="Nume"
-        value={name}
-        onChangeText={setName}
-        className="border border-gray-300 rounded-2xl p-3 mb-3"
-      />
-      <TextInput
+        style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
-        className="border border-gray-300 rounded-2xl p-3 mb-3"
       />
+
       <TextInput
+        style={styles.input}
         placeholder="Parolă"
+        placeholderTextColor="#aaa"
+        secureTextEntry
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
-        className="border border-gray-300 rounded-2xl p-3 mb-5"
       />
 
-      <TouchableOpacity onPress={handleRegister} className="bg-blue-600 p-4 rounded-2xl">
-        <Text className="text-white text-center font-semibold text-lg">Creează cont</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirmă parola"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        value={confirm}
+        onChangeText={setConfirm}
+      />
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleRegister}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Înregistrează-te</Text>
+        )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push("/auth/login")} className="mt-4">
-        <Text className="text-center text-blue-600">Ai deja cont? Autentifică-te</Text>
+      <TouchableOpacity
+        onPress={() => router.push("/auth/login")}
+        style={{ marginTop: 20 }}
+      >
+        <Text style={styles.linkText}>
+          Ai deja un cont? <Text style={{ fontWeight: "bold" }}>Autentifică-te</Text>
+        </Text>
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF8E1",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "900",
+    color: "#1E2A78",
+    marginBottom: 30,
+  },
+  input: {
+    width: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 12,
+    marginBottom: 15,
+    fontSize: 16,
+    color: "#333",
+  },
+  button: {
+    width: "90%",
+    backgroundColor: "#1E2A78",
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  linkText: {
+    color: "#1E2A78",
+    fontSize: 15,
+    textAlign: "center",
+  },
+});

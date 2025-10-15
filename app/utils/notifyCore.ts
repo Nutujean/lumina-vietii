@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
-import sarbatori from "../../constants/sarbatori";
+import { SARBATORI } from "../constants/sarbatori";
 
 // 🔔 Configurare notificări și permisiuni
 export async function setupNotifications() {

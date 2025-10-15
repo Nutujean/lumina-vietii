@@ -1,37 +1,12 @@
-// app/utils/api.ts
-const API_BASE = "http://localhost:5000/api";
-// dacă backendul e online, folosește:
-// const API_BASE = "https://lumina-vietii-backend.onrender.com/api";
+const API_URL = "https://lumina-vietii-backend.onrender.com/api/users";
 
-export async function apiPost(path: string, body: any, token?: string) {
+export async function checkPremium(email: string) {
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(body),
-    });
-    return await res.json();
-  } catch (e) {
-    console.error("API POST error:", e);
-    return null;
+    const res = await fetch(`${API_URL}/${email}`);
+    const data = await res.json();
+    return data.isPremium === true;
+  } catch (err) {
+    console.log("Eroare verificare Premium:", err);
+    return false;
   }
 }
-
-export async function apiGet(path: string, token?: string) {
-  try {
-    const res = await fetch(`${API_BASE}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    return await res.json();
-  } catch (e) {
-    console.error("API GET error:", e);
-    return null;
-  }
-}
-

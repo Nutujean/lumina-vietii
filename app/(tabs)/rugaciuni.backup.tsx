@@ -1,16 +1,16 @@
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
 
 const API_URL = "https://lumina-vietii-backend.onrender.com/api/users";
 
@@ -102,7 +102,7 @@ ci ne izbăvește de cel rău. Amin.`,
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>🕊️ Rugăciuni (test)</Text>
+        <Text style={styles.headerTitle}>Rugăciuni</Text>
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 16 }}>
