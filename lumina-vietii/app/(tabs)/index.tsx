@@ -1,98 +1,81 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const cards = [
+    { title: "Calendar ortodox", image: require("../../assets/icons/calendar.png"), path: "/(tabs)/calendar" },
+    { title: "Rugăciuni", image: require("../../assets/icons/rugaciuni.png"), path: "/(tabs)/rugaciuni" },
+    { title: "Aprinde o lumânare", image: require("../../assets/icons/lumanare.png"), path: "/(tabs)/lumanare" },
+    { title: "Notițe", image: require("../../assets/icons/notite.png"), path: "/(tabs)/notite" },
+    { title: "Susține aplicația", image: require("../../assets/icons/sustine.png"), path: "/(tabs)/donatii" },
+    { title: "Biblia", image: require("../../assets/icons/biblia.png"), path: "/(tabs)/biblia" },
+    { title: "Contul meu", image: require("../../assets/icons/contul.png"), path: "/(tabs)/contul-meu" },
+    { title: "Ajutor", image: require("../../assets/icons/ajutor.png"), path: "/(tabs)/ajutor" },
+  ];
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Lumina Vieții</Text>
+
+      <View style={styles.grid}>
+        {cards.map((card, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            onPress={() => router.push(card.path)}
+          >
+            <Image source={card.image} style={styles.icon} />
+            <Text style={styles.cardText}>{card.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    paddingVertical: 24,
+    paddingHorizontal: 12,
   },
-  stepContainer: {
-    gap: 8,
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#1a1a1a",
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  card: {
+    width: "48%",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    paddingVertical: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 14,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  icon: {
+    width: 50,
+    height: 50,
     marginBottom: 8,
+    resizeMode: "contain",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  cardText: {
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
+    color: "#222",
   },
 });
+

@@ -1,182 +1,182 @@
-import { View, Text, Pressable, Image, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+
+const { width } = Dimensions.get("window");
+
+/** ---- CONTROL FIN: ajustează ușor dacă vrei micro-diferențe ---- */
+const COLS = 3;
+const PAD_H = 18;                 // padding lateral ecran
+const GAP = 14;                   // spațiu între carduri
+const CARD = Math.floor((width - PAD_H * 2 - GAP * (COLS - 1)) / COLS); // latura cardului
+const ICON = Math.round(CARD * 0.69);      // mărimea iconului din card
+const TEXT_FS = Math.round(CARD * 0.10);   // mărimea textului din card
+const TITLE_FS = 36;                        // „Lumina Vieții” – mare, ca în poză
+const SUBTITLE_FS = 10;
+/** --------------------------------------------------------------- */
 
 export default function HomeScreen() {
   const router = useRouter();
   const [temp, setTemp] = useState<number | null>(null);
 
-  // 🌤️ Preluăm temperatura reală pentru Oltenița
+  // Vreme – Oltenița
   useEffect(() => {
-    const fetchWeather = async () => {
+    (async () => {
       try {
         const res = await fetch(
-          "https://api.openweathermap.org/data/2.5/weather?lat=44.08&lon=26.63&appid=1400ca456e470d6a5d5a94c0fdb6766d&units=metric&lang=ro"
+          "https://api.open-meteo.com/v1/forecast?latitude=44.083&longitude=26.633&current_weather=true"
         );
         const data = await res.json();
-        if (data?.main?.temp) setTemp(Math.round(data.main.temp));
-      } catch (err) {
-        console.log("Eroare vreme:", err);
-      }
-    };
-    fetchWeather();
+        if (data?.current_weather?.temperature !== undefined) {
+          setTemp(data.current_weather.temperature);
+        }
+      } catch {}
+    })();
   }, []);
 
   const cards = [
-    { title: "Calendar", image: require("../../assets/icons/calendar.png"), path: "calendar" },
-    { title: "Vremea", image: require("../../assets/icons/vremea.png"), path: "vremea" },
-    { title: "Biblia", image: require("../../assets/icons/biblia.png"), path: "biblia" },
-    { title: "Notițe", image: require("../../assets/icons/notite.png"), path: "notite" },
-    { title: "Rugăciuni", image: require("../../assets/icons/rugaciuni.png"), path: "rugaciuni" },
-    { title: "Lumânare", image: require("../../assets/icons/lumanare.png"), path: "lumanare" },
-    { title: "Susține", image: require("../../assets/icons/sustine.png"), path: "donatii" },
-    { title: "Biserici", image: require("../../assets/icons/biserici.png"), path: "biserici" },
-    { title: "Contul meu", image: require("../../assets/icons/contulmeu.png"), path: "contul-meu" },
+    { title: "Calendar", image: require("../../assets/icons/calendar.png"), path: "/(tabs)/calendar" },
+    {
+      title: temp !== null ? `Vremea ${Math.round(temp)}°C` : "Vremea",
+      image: require("../../assets/icons/vremea.png"),
+      path: "/(tabs)/vremea",
+    },
+    { title: "Biblia", image: require("../../assets/icons/biblia.png"), path: "/(tabs)/biblia" },
+    { title: "Notițe", image: require("../../assets/icons/notite.png"), path: "/(tabs)/notite" },
+    { title: "Rugăciuni", image: require("../../assets/icons/rugaciuni.png"), path: "/(tabs)/rugaciuni" },
+    { title: "Lumânare", image: require("../../assets/icons/lumanare.png"), path: "/(tabs)/lumanare" },
+    { title: "Susține", image: require("../../assets/icons/sustine.png"), path: "/(tabs)/donatii" },
+    { title: "Biserici", image: require("../../assets/icons/biserici.png"), path: "/(tabs)/biserici" },
+    { title: "Contul meu", image: require("../../assets/icons/contulmeu.png"), path: "/(tabs)/contul-meu" },
   ];
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        backgroundColor: "#FFF8E1",
-        paddingVertical: 25,
-        paddingHorizontal: 18,
-      }}
-    >
-      {/* Titlu aplicație */}
-      <Text
-        style={{
-          fontSize: 30,
-          fontWeight: "900",
-          textAlign: "center",
-          color: "#1E2A78",
-          marginBottom: 6,
-        }}
-      >
-        Lumina Vieții
-      </Text>
-      <Text
-        style={{
-          textAlign: "center",
-          fontSize: 16,
-          color: "#4A5568",
-          marginBottom: 26,
-        }}
-      >
-        Ghid de credință și speranță
-      </Text>
+    <ScrollView contentContainerStyle={styles.screen}>
+      {/* header crem + titlu mare */}
+      <View style={styles.headerWrap}>
+        <Text style={styles.title}>Lumina Vieții</Text>
+        <Text style={styles.subtitle}>Ghid de credință și speranță</Text>
+      </View>
 
-      {/* Grilă 3x3 */}
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          rowGap: 22,
-        }}
-      >
-        {cards.map((card) => (
-          <Pressable
-            key={card.title}
-            onPress={() => router.push(card.path)}
-            style={{
-              width: "30%",
-              aspectRatio: 1,
-              borderRadius: 18,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3,
-              elevation: 4,
-              overflow: "hidden",
-            }}
-          >
+      {/* grilă 3×3 – cardul conține icon + text */}
+      <View style={styles.grid}>
+        {cards.map((c, i) => (
+          <TouchableOpacity key={i} activeOpacity={0.85} onPress={() => router.push(c.path as any)}>
             <LinearGradient
-              colors={["#FFD95A", "#F9C846", "#FFF8E1"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              colors={["#f6d36a", "#efb83c"]} // auriu saturat ca în poză
+              start={{ x: 0.08, y: 0.08 }}
+              end={{ x: 0.95, y: 0.95 }}
+              style={styles.card}
             >
-              <Image
-                source={card.image}
-                style={{ width: 85, height: 75, marginBottom: 4 }}
-                resizeMode="contain"
-              />
-
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "600",
-                  color: "#1E2A78",
-                  textAlign: "center",
-                }}
-              >
-                {card.title}
-              </Text>
-
-              {/* 🌡️ doar pe cardul „Vremea” afișăm temperatura */}
-              {card.title === "Vremea" && (
-                <Text
-                  style={{
-                    fontSize: 13,
-                    color: "#1E2A78",
-                    fontWeight: "600",
-                    marginTop: -2,
-                  }}
-                >
-                  {temp !== null ? `${temp}°C` : "…"}
-                </Text>
-              )}
+              <Image source={c.image} style={styles.icon} />
+              <Text style={styles.cardText} numberOfLines={2}>{c.title}</Text>
             </LinearGradient>
-          </Pressable>
+          </TouchableOpacity>
         ))}
       </View>
 
-      {/* Rugăciunea Tatăl nostru */}
-      <View
-        style={{
-          marginTop: 35,
-          padding: 16,
-          backgroundColor: "rgba(255,255,255,0.9)",
-          borderRadius: 14,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.15,
-          shadowRadius: 2,
-          elevation: 2,
-        }}
-      >
-        <Text
-          style={{
-            textAlign: "center",
-            fontSize: 18,
-            fontWeight: "700",
-            color: "#1E2A78",
-            marginBottom: 12,
-          }}
-        >
-          Rugăciunea Tatăl Nostru
-        </Text>
-        <Text
-          style={{
-            textAlign: "center",
-            fontSize: 15,
-            lineHeight: 24,
-            color: "#333",
-          }}
-        >
-          Tatăl nostru care ești în ceruri, sfințească-se Numele Tău, vie
-          împărăția Ta, facă-se voia Ta, precum în cer așa și pe pământ. Pâinea
-          noastră cea de toate zilele dă-ne-o nouă astăzi și ne iartă nouă
-          greșelile noastre, precum și noi iertăm greșiților noștri. Și nu ne
-          duce pe noi în ispită, ci ne izbăvește de cel rău. Amin.
+      {/* card „Rugăciunea Tatăl Nostru” */}
+      <View style={styles.prayerBox}>
+        <Text style={styles.prayerTitle}>Rugăciunea Tatăl Nostru</Text>
+        <Text style={styles.prayerText}>
+          Tatăl nostru care ești în ceruri, sfințească-se Numele Tău, vie împărăția Ta, facă-se voia Ta, precum în cer așa și pe pământ.
+          Pâinea noastră cea de toate zilele dă-ne-o noua astazi si ne iartă nouă greșelile noastre, precum și noi iertăm greșiților noștri.
+          Amin.
         </Text>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    backgroundColor: "#fff8e8", // crem cald pe tot ecranul
+    alignItems: "center",
+    paddingBottom: 28,
+  },
+  headerWrap: {
+    width: "100%",
+    backgroundColor: "#fff3d1", // bandă crem mai accentuată
+    paddingTop: 22,
+    paddingBottom: 18,
+    borderBottomLeftRadius: 36,
+    borderBottomRightRadius: 36,
+    alignItems: "center",
+  },
+  title: {
+    fontSize: TITLE_FS,
+    fontWeight: "800",
+    color: "#11235e", // albastru închis
+    letterSpacing: 0.3,
+  },
+  subtitle: {
+    marginTop: 6,
+    fontSize: SUBTITLE_FS,
+    color: "#666b78",
+    fontWeight: "600",
+  },
+
+  grid: {
+    marginTop: 14,
+    paddingHorizontal: PAD_H,
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    columnGap: GAP,
+    rowGap: GAP,
+    justifyContent: "space-between",
+  },
+  card: {
+    width: CARD,
+    height: CARD,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 6,
+    shadowColor: "#000",
+    shadowOpacity: 0.14,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 6,
+  },
+  icon: {
+    width: ICON,
+    height: ICON,
+    marginBottom: 6,
+    resizeMode: "contain",
+  },
+  cardText: {
+    fontSize: TEXT_FS,          // mare – ca în poză
+    lineHeight: TEXT_FS + 2,
+    fontWeight: "800",
+    color: "#11235e",
+    textAlign: "center",
+  },
+
+  prayerBox: {
+    width: width - 32,
+    marginTop: 18,
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.10,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
+  },
+  prayerTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#11235e",
+    marginBottom: 8,
+  },
+  prayerText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#2d2d2d",
+    textAlign: "justify",
+  },
+});
+

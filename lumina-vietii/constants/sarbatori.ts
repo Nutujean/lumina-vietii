@@ -1,0 +1,55 @@
+const sarbatori: Record<string, string> = {
+  // 🟡 2025
+  "01.01.2025": "Tăierea-împrejur cea după trup a Domnului; Sf. Vasile cel Mare",
+  "06.01.2025": "Botezul Domnului (Boboteaza)",
+  "07.01.2025": "Soborul Sf. Ioan Botezătorul",
+  "02.02.2025": "Întâmpinarea Domnului",
+  "23.03.2025": "Floriile (Intrarea Domnului în Ierusalim)",
+  "24.03.2025": "Buna Vestire",
+  "30.03.2025": "Paștele (Învierea Domnului)",
+  "01.05.2025": "Sf. Proroc Ieremia",
+  "02.05.2025": "Sf. Atanasie cel Mare",
+  "21.05.2025": "Sfinții Împărați Constantin și Elena",
+  "29.05.2025": "Înălțarea Domnului",
+  "08.06.2025": "Pogorârea Sf. Duh (Rusaliile)",
+  "15.08.2025": "Adormirea Maicii Domnului",
+  "14.09.2025": "Înălțarea Sfintei Cruci",
+  "08.11.2025": "Sfinții Mihail și Gavriil",
+  "25.12.2025": "Nașterea Domnului (Crăciunul)",
+
+  // 🟡 2026
+  "01.01.2026": "Tăierea-împrejur cea după trup a Domnului; Sf. Vasile cel Mare",
+  "06.01.2026": "Botezul Domnului (Boboteaza)",
+  "07.01.2026": "Soborul Sf. Ioan Botezătorul",
+  "15.02.2026": "Duminica Înfricoșatei Judecăți",
+  "22.02.2026": "Lăsatul secului de brânză",
+  "05.04.2026": "Floriile",
+  "12.04.2026": "Paștele (Învierea Domnului)",
+  "29.05.2026": "Înălțarea Domnului",
+  "07.06.2026": "Pogorârea Sf. Duh (Rusaliile)",
+  "21.05.2026": "Sfinții Constantin și Elena",
+  "15.08.2026": "Adormirea Maicii Domnului",
+  "08.09.2026": "Nașterea Maicii Domnului",
+  "14.09.2026": "Înălțarea Sfintei Cruci",
+  "21.11.2026": "Intrarea Maicii Domnului în Biserică",
+  "25.12.2026": "Nașterea Domnului (Crăciunul)",
+
+  // 🟡 2027
+  "01.01.2027": "Tăierea-împrejur cea după trup a Domnului; Sf. Vasile cel Mare",
+  "06.01.2027": "Botezul Domnului (Boboteaza)",
+  "07.01.2027": "Soborul Sf. Ioan Botezătorul",
+  "14.02.2027": "Lăsatul secului de carne",
+  "21.02.2027": "Lăsatul secului de brânză",
+  "28.03.2027": "Floriile",
+  "04.04.2027": "Paștele (Învierea Domnului)",
+  "13.05.2027": "Înălțarea Domnului",
+  "23.05.2027": "Pogorârea Sf. Duh (Rusaliile)",
+  "21.05.2027": "Sfinții Constantin și Elena",
+  "15.08.2027": "Adormirea Maicii Domnului",
+  "14.09.2027": "Înălțarea Sfintei Cruci",
+  "08.11.2027": "Sfinții Mihail și Gavriil",
+  "25.12.2027": "Nașterea Domnului (Crăciunul)",
+};
+
+export default sarbatori;
+

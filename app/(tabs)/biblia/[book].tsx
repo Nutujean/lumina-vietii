@@ -1,92 +1,108 @@
-// app/(tabs)/biblia/[book].tsx
-import React from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import { getBookById } from "../../../constants/biblia";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import biblia_full from "../../../constants/biblia_full.json";
 
 export default function BookScreen() {
+  const { book } = useLocalSearchParams();
   const router = useRouter();
-  const params = useLocalSearchParams() as { book?: string };
-  const bookId = params.book ?? "";
-  console.log("📖 DEBUG bookId:", bookId);
+  const [carte, setCarte] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    try {
+      // Caută cartea în ambele testamente
+      const toateCartile = [
+        ...biblia_full["Vechiul Testament"],
+        ...biblia_full["Noul Testament"],
+      ];
+      const gasita = toateCartile.find(
+        (c) => c.name.toLowerCase() === String(book).toLowerCase()
+      );
+      setCarte(gasita || null);
+    } catch (err) {
+      console.error("Eroare la încărcarea cărții:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [book]);
 
-  const book = getBookById(bookId);
-
-  if (!book) {
+  if (loading) {
     return (
-      <View style={styles.center}>
-        <Text>Cartea nu a fost găsită.</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#FFF8E1" }}>
+        <ActivityIndicator size="large" color="#1E2A78" />
+        <Text style={{ color: "#1E2A78", marginTop: 10 }}>Se încarcă...</Text>
       </View>
     );
   }
 
-  const chapters = Array.from({ length: book.chaptersCount }, (_, i) => i + 1);
+  if (!carte) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#FFF8E1" }}>
+        <Text style={{ color: "#B22222", fontWeight: "700", fontSize: 18 }}>
+          Cartea nu a fost găsită.
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      {/* 🔙 Bara de sus cu buton Înapoi */}
-      <View style={styles.headerBar}>
-        <Text style={styles.backButton} onPress={() => router.back()}>
-          ← Înapoi
+    <View style={{ flex: 1, backgroundColor: "#FFF8E1" }}>
+      {/* 🔹 Bara albastră */}
+      <View
+        style={{
+          backgroundColor: "#1E2A78",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 15,
+          paddingVertical: 12,
+          marginTop: 40,
+        }}
+      >
+        <Pressable
+          onPress={() => router.back()}
+          style={{
+            backgroundColor: "#F9C846",
+            borderRadius: 50,
+            padding: 8,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>‹</Text>
+        </Pressable>
+        <Text style={{ color: "#fff", fontSize: 18, fontWeight: "700" }}>
+          {carte.name}
         </Text>
-        <Text style={styles.headerTitle}>{book.name}</Text>
+        <View style={{ width: 30 }} />
       </View>
 
-      <FlatList
-        data={chapters}
-        keyExtractor={(n) => String(n)}
-        numColumns={4}
-        contentContainerStyle={{ padding: 16 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.chapterBtn}
-            onPress={() => router.push(`/(tabs)/biblia/${book.id}/${item}`)}
+      {/* 🔸 Lista capitolelor */}
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
+        {carte.chapters.map((_, idx) => (
+          <Pressable
+            key={idx}
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/carte/view",
+                params: { titlu: carte.name, capitol: String(idx + 1) },
+              })
+            }
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 12,
+              paddingVertical: 15,
+              paddingHorizontal: 10,
+              marginBottom: 10,
+              borderWidth: 1,
+              borderColor: "#F9C846",
+            }}
           >
-            <Text style={styles.chapterText}>Cap. {item}</Text>
-          </TouchableOpacity>
-        )}
-      />
+            <Text style={{ color: "#1E2A78", fontWeight: "700", fontSize: 16 }}>
+              Capitolul {idx + 1}
+            </Text>
+          </Pressable>
+        ))}
+      </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFDF8" },
-  headerBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  backButton: {
-    fontSize: 18,
-    color: "#9A3412",
-    fontWeight: "600",
-    marginRight: 10,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#9A3412",
-  },
-  chapterBtn: {
-    flex: 1,
-    minWidth: 80,
-    margin: 8,
-    backgroundColor: "white",
-    padding: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  chapterText: { fontWeight: "600" },
-  center: { flex: 1, alignItems: "center", justifyContent: "center" },
-});

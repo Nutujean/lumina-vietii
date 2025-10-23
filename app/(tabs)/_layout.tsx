@@ -1,6 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { useColorScheme } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Colors from "../../constants/Colors";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -8,10 +9,13 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
-        tabBarActiveTintColor: colorScheme === "dark" ? "#7BB1FF" : "#0A67FF",
+        // 🔹 Ascunde complet bara de navigație de jos
+        tabBarStyle: { display: "none" },
       }}
     >
+      {/* 🏠 Acasă */}
       <Tabs.Screen
         name="index"
         options={{
@@ -22,6 +26,7 @@ export default function TabLayout() {
         }}
       />
 
+      {/* 📅 Calendar */}
       <Tabs.Screen
         name="calendar"
         options={{
@@ -32,6 +37,18 @@ export default function TabLayout() {
         }}
       />
 
+      {/* 🙏 Rugăciuni */}
+      <Tabs.Screen
+        name="rugaciuni"
+        options={{
+          title: "Rugăciuni",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      {/* 🕯️ Lumânare */}
       <Tabs.Screen
         name="lumanare"
         options={{
@@ -42,16 +59,18 @@ export default function TabLayout() {
         }}
       />
 
+      {/* 📖 Biblia */}
       <Tabs.Screen
-        name="notite"
+        name="biblia"
         options={{
-          title: "Notițe",
+          title: "Biblia",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="create-outline" size={size} color={color} />
+            <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
       />
 
+      {/* ❤️ Susține */}
       <Tabs.Screen
         name="donatii"
         options={{
@@ -62,6 +81,7 @@ export default function TabLayout() {
         }}
       />
 
+      {/* 👤 Contul meu */}
       <Tabs.Screen
         name="contul-meu"
         options={{
@@ -71,6 +91,14 @@ export default function TabLayout() {
           ),
         }}
       />
+<Tabs.Screen
+  name="biserici"
+  options={{
+    title: "Biserici",
+    // ascunde din bara de tab-uri, îl accesăm doar din card
+    tabBarButton: () => null,
+  }}
+/>
     </Tabs>
   );
 }

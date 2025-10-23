@@ -1,183 +1,264 @@
-// app/(tabs)/vremea.tsx
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
+  Pressable,
   ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
+
+const API_KEY = "5eba6a691658771bc5536af90562b04c";
 
 export default function VremeaScreen() {
   const router = useRouter();
   const [weather, setWeather] = useState<any>(null);
+  const [forecast, setForecast] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const API_KEY = "8f6e4df06f7fefcb2b64cb2c4a9e3a92"; // OpenWeatherMap test key
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
+        // 🔹 Permisiune locație
+        const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          setErrorMsg("Accesul la locație a fost refuzat.");
+          setError("Permisiunea pentru locație a fost refuzată.");
           setLoading(false);
           return;
         }
 
-        const loc = await Location.getCurrentPositionAsync({});
-        const { latitude, longitude } = loc.coords;
+        // 🔹 Obține locația curentă
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
 
+        // 🔹 Vreme actuală
         const res = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=ro&appid=${API_KEY}`
         );
         const data = await res.json();
+        console.log("✅ weather =", data);
+        if (!res.ok || !data.main)
+          throw new Error(data.message || "Eroare la datele meteo.");
         setWeather(data);
-      } catch (err) {
-        setErrorMsg("Nu s-a putut obține prognoza meteo.");
+
+        // 🔹 Prognoză 5 zile
+        const resForecast = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=ro&appid=${API_KEY}`
+        );
+        const dataForecast = await resForecast.json();
+        console.log("✅ forecast =", dataForecast);
+
+        if (!resForecast.ok || !dataForecast.list)
+          throw new Error(
+            dataForecast.message ||
+              "Eroare la preluarea prognozei meteo (list lipsă)."
+          );
+
+        const uniqueDays: Record<string, any> = {};
+        dataForecast.list.forEach((entry: any) => {
+          const date = new Date(entry.dt_txt);
+          const day = date.toISOString().split("T")[0];
+          if (date.getHours() === 12 && !uniqueDays[day]) {
+            uniqueDays[day] = entry;
+          }
+        });
+        setForecast(Object.values(uniqueDays).slice(0, 5));
+      } catch (err: any) {
+        console.log("❌ Detalii eroare:", err);
+        setError(err.message || "Eroare la preluarea datelor meteo.");
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
+  // 🔹 Loading
+  if (loading)
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#FFF8E1",
+        }}
+      >
+        <ActivityIndicator size="large" color="#1E2A78" />
+        <Text style={{ marginTop: 0.8, color: "#1E2A78" }}>
+          Se încarcă vremea...
+        </Text>
+      </View>
+    );
+
+  // 🔹 Eroare
+  if (error)
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#FFF8E1",
+          padding: 20,
+        }}
+      >
+        <Text style={{ color: "red", fontSize: 16, textAlign: "center" }}>
+          {error}
+        </Text>
+      </View>
+    );
+
+  // 🔹 Afișare vreme + prognoză
   return (
-    <View style={styles.container}>
-      {/* 🔹 Bara albastră identică cu celelalte pagini */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Vremea</Text>
+    <View style={{ flex: 1, backgroundColor: "#FFF8E1" }}>
+      {/* 🔷 Bara albastră + buton galben */}
+      <View
+        style={{
+          backgroundColor: "#1E2A78",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 15,
+          paddingVertical: 10,
+          elevation: 3,
+        }}
+      >
+        <Pressable
+          onPress={() => router.back()}
+          style={{
+            backgroundColor: "#F9C846",
+            padding: 6,
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+        </Pressable>
+        <Text style={{ fontSize: 16, fontWeight: "700", color: "#fff" }}>
+          Vremea
+        </Text>
+        <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#1E2A78" />
-        ) : errorMsg ? (
-          <Text style={styles.error}>{errorMsg}</Text>
-        ) : weather && weather.main ? (
-          <View style={styles.weatherCard}>
-            <Text style={styles.cityName}>{weather.name || "Locație necunoscută"}</Text>
-            <Text style={styles.temp}>
-              {weather.main?.temp ? `${Math.round(weather.main.temp)}°C` : "--°C"}
-            </Text>
-            <Text style={styles.desc}>
-              {weather.weather?.[0]?.description || "Fără descriere"}
-            </Text>
+      {/* 🔸 Conținut */}
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 18,
+          paddingVertical: 25,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: "700",
+            color: "#1E2A78",
+            textAlign: "center",
+          }}
+        >
+          {weather?.name || "Locația ta"}
+        </Text>
 
-            <View style={styles.detailsRow}>
-              <Text style={styles.detail}>
-                💨 Vânt: {weather.wind?.speed ?? "?"} m/s
+        {/* 🔹 Temperatura principală */}
+        <View
+          style={{
+            alignItems: "center",
+            marginVertical: 20,
+            backgroundColor: "rgba(255,255,255,0.9)",
+            borderRadius: 12,
+            padding: 20,
+            borderWidth: 1,
+            borderColor: "#F9C846",
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 6,
+          }}
+        >
+          <Image
+            source={{
+              uri: `https://openweathermap.org/img/wn/${weather?.weather?.[0]?.icon}@2x.png`,
+            }}
+            style={{ width: 100, height: 100 }}
+          />
+          <Text
+            style={{
+              fontSize: 48,
+              fontWeight: "800",
+              color: "#1E2A78",
+              marginVertical: 6,
+            }}
+          >
+            {Math.round(weather?.main?.temp)}°C
+          </Text>
+          <Text style={{ fontSize: 18, color: "#333" }}>
+            {weather?.weather?.[0]?.description}
+          </Text>
+        </View>
+
+        {/* 🔹 Prognoză 5 zile */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "700",
+            color: "#1E2A78",
+            marginBottom: 10,
+          }}
+        >
+          Prognoză 5 zile
+        </Text>
+
+        {forecast.map((day: any, i) => {
+          const date = new Date(day.dt_txt);
+          const dayName = date.toLocaleDateString("ro-RO", {
+            weekday: "long",
+            day: "numeric",
+            month: "short",
+          });
+          return (
+            <View
+              key={i}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "rgba(255,255,255,0.9)",
+                borderRadius: 10,
+                padding: 12,
+                marginBottom: 8,
+                borderWidth: 1,
+                borderColor: "#F9C846",
+              }}
+            >
+              <Text style={{ fontSize: 16, color: "#1E2A78", flex: 1 }}>
+                {dayName}
               </Text>
-              <Text style={styles.detail}>
-                💧 Umiditate: {weather.main?.humidity ?? "?"}%
+              <Image
+                source={{
+                  uri: `https://openweathermap.org/img/wn/${day.weather[0].icon}.png`,
+                }}
+                style={{ width: 40, height: 40 }}
+              />
+              <Text
+                style={{
+                  color: "#333",
+                  width: 90,
+                  textAlign: "right",
+                }}
+              >
+                {Math.round(day.main.temp_min)}° /{" "}
+                <Text style={{ fontWeight: "700" }}>
+                  {Math.round(day.main.temp_max)}°C
+                </Text>
               </Text>
             </View>
-
-            <Text style={styles.detailSmall}>
-              🌡️ Max:{" "}
-              {weather.main?.temp_max ? Math.round(weather.main.temp_max) : "--"}°C | Min:{" "}
-              {weather.main?.temp_min ? Math.round(weather.main.temp_min) : "--"}°C
-            </Text>
-          </View>
-        ) : (
-          <Text style={styles.error}>Nu s-au găsit date despre vreme.</Text>
-        )}
+          );
+        })}
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8E1" },
-
-  // 🔹 Bară identică cu Rugăciuni / Notițe
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1E2A78",
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    marginTop: 40,
-    marginBottom: 20,
-    width: "90%",
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-
-  backButton: {
-    position: "absolute",
-    left: 12,
-    backgroundColor: "#F9C846",
-    borderRadius: 50,
-    padding: 6,
-  },
-
-  headerTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-
-  weatherCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-  },
-
-  cityName: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1E2A78",
-    marginBottom: 6,
-  },
-
-  temp: {
-    fontSize: 48,
-    fontWeight: "900",
-    color: "#b8860b",
-  },
-
-  desc: {
-    fontSize: 18,
-    color: "#555",
-    marginBottom: 10,
-    textTransform: "capitalize",
-  },
-
-  detailsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 6,
-  },
-
-  detail: {
-    fontSize: 15,
-    color: "#1E2A78",
-  },
-
-  detailSmall: {
-    fontSize: 14,
-    color: "#333",
-    marginTop: 4,
-  },
-
-  error: {
-    textAlign: "center",
-    color: "#B22222",
-    fontSize: 16,
-    marginTop: 20,
-  },
-});

@@ -1,16 +1,16 @@
-import { useState, useRef, useEffect, memo } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { memo, useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
+  Alert,
   Animated,
   Image,
-  Alert,
-  TouchableOpacity,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 
 const Flame = memo(({ visible, anim }: { visible: boolean; anim: Animated.Value }) => (
   <Animated.View
@@ -22,7 +22,6 @@ const Flame = memo(({ visible, anim }: { visible: boolean; anim: Animated.Value 
       opacity: visible ? 1 : 0,
     }}
   >
-    {/* Aură mică */}
     <View
       style={{
         width: 55,
@@ -36,7 +35,6 @@ const Flame = memo(({ visible, anim }: { visible: boolean; anim: Animated.Value 
         shadowRadius: 10,
       }}
     />
-    {/* Flacără mai mare */}
     <Animated.Image
       source={require("../../assets/icons/flacara.gif")}
       style={{
@@ -76,7 +74,6 @@ const Candle = memo(
         {title}
       </Text>
 
-      {/* Container lumânare */}
       <View
         style={{
           width: 120,
@@ -85,7 +82,6 @@ const Candle = memo(
           justifyContent: "flex-end",
         }}
       >
-        {/* Lumânare statică */}
         <Image
           source={require("../../assets/icons/lumanare-stinsa.png")}
           style={{
@@ -96,12 +92,9 @@ const Candle = memo(
           }}
           resizeMode="contain"
         />
-
-        {/* Flacără animată */}
         <Flame visible={isOn} anim={anim} />
       </View>
 
-      {/* Nume + butoane */}
       <TextInput
         placeholder="Nume"
         placeholderTextColor="#999"
@@ -186,55 +179,65 @@ export default function LumanareScreen() {
       "Pentru a aprinde mai multe lumânări, accesează versiunea Premium.",
       [
         { text: "Anulează", style: "cancel" },
-        { text: "Mergi la Premium", onPress: () => router.push("/abonament") },
+        { text: "Mergi la Premium", onPress: () => router.push("/(tabs)/donatii") },
       ]
     );
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#FFF8E1",
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
         alignItems: "center",
-        justifyContent: "flex-start",
+        backgroundColor: "#FFF8E1",
+        paddingBottom: 40,
       }}
     >
-      {/* 🔹 Bara de sus cu buton Înapoi */}
+      {/* 🔷 Bara albastră + buton galben */}
       <View
         style={{
+          backgroundColor: "#1E2A78",
           flexDirection: "row",
           alignItems: "center",
-          backgroundColor: "#1E2A78",
-          paddingVertical: 14,
-          paddingHorizontal: 10,
-          borderRadius: 12,
-          marginTop: 40,
-          marginBottom: 20,
-          width: "90%",
-          alignSelf: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 15,
+          paddingVertical: 10,
+          width: "100%",
+          elevation: 3,
         }}
       >
-        <TouchableOpacity
+        <Pressable
           onPress={() => router.back()}
           style={{
             backgroundColor: "#F9C846",
-            borderRadius: 50,
             padding: 6,
-            marginRight: 10,
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
-        <Text style={{ color: "#fff", fontSize: 20, fontWeight: "700" }}>
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+        </Pressable>
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: "700",
+            color: "#fff",
+            textAlign: "center",
+            flex: 1,
+            marginRight: 40,
+          }}
+        >
           Aprinde o lumânare
         </Text>
       </View>
 
+      {/* 🕯️ Text introductiv */}
       <Text
         style={{
           fontSize: 14,
           color: "#444",
+          marginTop: 25,
           marginBottom: 30,
           textAlign: "center",
           width: "85%",
@@ -269,7 +272,7 @@ export default function LumanareScreen() {
         />
       </View>
 
-      {/* ➕ Buton Premium */}
+      {/* 🔒 Buton Premium */}
       <Pressable
         onPress={handleAddMore}
         style={{
@@ -284,6 +287,6 @@ export default function LumanareScreen() {
           Aprinde mai multe lumânări 🔒
         </Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }

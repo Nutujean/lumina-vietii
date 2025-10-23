@@ -1,191 +1,272 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 const API_URL = "https://lumina-vietii-backend.onrender.com/api/users";
 
 export default function ContulMeuScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState<string | null>(null);
-  const [isPremium, setIsPremium] = useState(false);
+  const [email, setEmail] = useState<string>("Nelogat");
+  const [isPremium, setIsPremium] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    (async () => {
       try {
-        const storedEmail = await SecureStore.getItemAsync("userEmail");
-        if (!storedEmail) {
-          setEmail(null);
+        const savedEmail = await SecureStore.getItemAsync("userEmail");
+        if (!savedEmail) {
+          setEmail("Nelogat");
           setIsPremium(false);
           setLoading(false);
           return;
         }
 
-        setEmail(storedEmail);
+        setEmail(savedEmail);
 
-        const res = await fetch(`${API_URL}/${storedEmail}`);
+        const res = await fetch(`${API_URL}/${savedEmail}`);
         const data = await res.json();
+        console.log("🔹 Date utilizator:", data);
 
-        if (data && typeof data.isPremium === "boolean") {
-          setIsPremium(data.isPremium);
-        } else {
-          setIsPremium(false);
-        }
+        setIsPremium(data.isPremium || false);
       } catch (err) {
-        console.log("❌ Eroare la verificarea contului:", err);
-        Alert.alert("Eroare", "Nu s-a putut verifica statusul contului.");
+        console.error("❌ Eroare la verificarea contului:", err);
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchUser();
+    })();
   }, []);
 
   const handleLogout = async () => {
-    await SecureStore.deleteItemAsync("userEmail");
-    Alert.alert("Deconectat", "Ai fost deconectat cu succes.");
-    router.replace("index");
-  };
-
-  const handleSupport = () => {
-    router.push("donatii");
+    Alert.alert("Deconectare", "Sigur vrei să te deconectezi?", [
+      { text: "Anulează", style: "cancel" },
+      {
+        text: "Da, deconectează-mă",
+        style: "destructive",
+        onPress: async () => {
+          await SecureStore.deleteItemAsync("userEmail");
+          router.replace("/auth/login");
+        },
+      },
+    ]);
   };
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#FFF8E1",
+        }}
+      >
         <ActivityIndicator size="large" color="#1E2A78" />
-        <Text style={styles.loadingText}>Se încarcă datele contului...</Text>
+        <Text style={{ color: "#1E2A78", marginTop: 10 }}>
+          Se încarcă datele contului...
+        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* 🔹 Bara albastră sus */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Contul meu</Text>
+    <ScrollView style={{ flex: 1, backgroundColor: "#FFF8E1" }}>
+      {/* 🔷 Bara albastră + buton galben */}
+      <View
+        style={{
+          backgroundColor: "#1E2A78",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 15,
+          paddingVertical: 10,
+          elevation: 3,
+        }}
+      >
+        <Pressable
+          onPress={() => router.back()}
+          style={{
+            backgroundColor: "#F9C846",
+            padding: 6,
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+        </Pressable>
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: "700",
+            color: "#fff",
+            textAlign: "center",
+            flex: 1,
+            marginRight: 40,
+          }}
+        >
+          Contul meu
+        </Text>
       </View>
 
-      <View style={styles.content}>
-        <Text style={styles.label}>Adresa de email:</Text>
-        <Text style={styles.value}>{email || "Necunoscut"}</Text>
-
-        <Text style={styles.label}>Status cont:</Text>
-        <Text
-          style={[
-            styles.value,
-            { color: isPremium ? "#b8860b" : "#B22222", fontWeight: "700" },
-          ]}
+      {/* 🟡 Secțiune specială pentru conturi Premium */}
+      {isPremium && (
+        <View
+          style={{
+            backgroundColor: "#FFF9E5",
+            borderRadius: 15,
+            borderWidth: 2,
+            borderColor: "#F9C846",
+            margin: 20,
+            padding: 20,
+            alignItems: "center",
+            shadowColor: "#F9C846",
+            shadowOpacity: 0.4,
+            shadowRadius: 8,
+            elevation: 4,
+          }}
         >
-          {isPremium ? "Premium activ" : "Gratuit"}
+          <Image
+            source={require("../../assets/icons/coroana.png")}
+            style={{ width: 70, height: 50, marginBottom: 10 }}
+            resizeMode="contain"
+          />
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "800",
+              color: "#B8860B",
+              textAlign: "center",
+              marginBottom: 5,
+            }}
+          >
+            👑 Mulțumim pentru susținere!
+          </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "#1E2A78",
+              textAlign: "center",
+            }}
+          >
+            Ai acces complet la toate funcțiile aplicației Lumina Vieții.
+          </Text>
+        </View>
+      )}
+
+      {/* 🔸 Informații cont */}
+      <View style={{ padding: 20, alignItems: "center" }}>
+        <Ionicons
+          name="person-circle-outline"
+          size={90}
+          color="#1E2A78"
+          style={{ marginBottom: 10 }}
+        />
+
+        <Text
+          style={{
+            fontSize: 16,
+            color: "#1E2A78",
+            fontWeight: "600",
+            marginBottom: 6,
+          }}
+        >
+          Email: {email}
         </Text>
 
-        <TouchableOpacity style={styles.supportButton} onPress={handleSupport}>
-          <Text style={styles.supportText}>💎 Susține aplicația</Text>
-        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: "800",
+            color: isPremium ? "green" : "red",
+            marginBottom: 10,
+          }}
+        >
+          {isPremium ? "Cont Premium" : "Cont Gratuit"}
+        </Text>
 
-        {email && (
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Deconectare</Text>
-          </TouchableOpacity>
+        {/* Buton Premium */}
+        {!isPremium && (
+          <Pressable
+            onPress={() => router.push("/(tabs)/donatii")}
+            style={{
+              backgroundColor: "#F9C846",
+              borderRadius: 10,
+              paddingVertical: 12,
+              paddingHorizontal: 25,
+              marginTop: 10,
+            }}
+          >
+            <Text
+              style={{
+                color: "#1E2A78",
+                fontWeight: "700",
+                fontSize: 16,
+              }}
+            >
+              Susține aplicația ❤️
+            </Text>
+          </Pressable>
         )}
       </View>
-    </View>
+
+      {/* 🔹 Alte informații */}
+      <View
+        style={{
+          backgroundColor: "#fff",
+          borderRadius: 12,
+          borderWidth: 1,
+          borderColor: "#F9C846",
+          marginHorizontal: 20,
+          padding: 15,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 15,
+            color: "#444",
+            lineHeight: 22,
+            textAlign: "center",
+          }}
+        >
+          În contul tău poți gestiona funcțiile aplicației Lumina Vieții.
+          {"\n\n"}
+          Versiunea Premium îți oferă acces complet la notițe nelimitate, mai
+          multe lumânări, rugăciuni suplimentare și actualizări speciale.
+        </Text>
+      </View>
+
+      {/* 🔴 Buton de delogare */}
+      <View style={{ alignItems: "center", marginTop: 40, marginBottom: 60 }}>
+        <Pressable
+          onPress={handleLogout}
+          style={{
+            backgroundColor: "#B22222",
+            borderRadius: 10,
+            paddingVertical: 12,
+            paddingHorizontal: 30,
+          }}
+        >
+          <Text
+            style={{
+              color: "#fff",
+              fontWeight: "700",
+              fontSize: 16,
+            }}
+          >
+            Deconectează-te
+          </Text>
+        </Pressable>
+      </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFF8E1",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1E2A78",
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    marginTop: 40,
-    marginBottom: 20,
-    width: "90%",
-    alignSelf: "center",
-  },
-  backButton: {
-    backgroundColor: "#F9C846",
-    borderRadius: 50,
-    padding: 6,
-    marginRight: 10,
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  content: {
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  label: {
-    fontSize: 16,
-    color: "#555",
-    marginTop: 10,
-  },
-  value: {
-    fontSize: 17,
-    color: "#1E2A78",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  supportButton: {
-    backgroundColor: "#b8860b",
-    paddingVertical: 12,
-    borderRadius: 10,
-    width: "80%",
-    marginTop: 25,
-  },
-  supportText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  logoutButton: {
-    backgroundColor: "#B22222",
-    paddingVertical: 10,
-    borderRadius: 10,
-    width: "80%",
-    marginTop: 20,
-  },
-  logoutText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#FFF8E1",
-  },
-  loadingText: {
-    marginTop: 10,
-    color: "#1E2A78",
-    fontSize: 16,
-  },
-});

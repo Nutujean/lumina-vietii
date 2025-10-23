@@ -2,33 +2,36 @@
   "expo": {
     "name": "Lumina Vietii",
     "slug": "lumina-vietii",
-    "version": "1.0.0",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "luminavietii",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.luminavietii"
+      "bundleIdentifier": "com.nutujean.luminavietii",
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.luminavietii"
+      "package": "com.nutujean.luminavietii",
+      "versionCode": 4
     },
     "extra": {
+      "API_URL": "https://lumina-vietii-backend.onrender.com/api/user",
       "eas": {
         "projectId": "d0078dfd-ff1f-4604-94a3-25b4b008aa31"
       }
     },
-    "plugins": [
-      "expo-secure-store"
-    ]
+    "owner": "nutujean"
   }
 }
