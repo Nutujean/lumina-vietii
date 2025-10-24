@@ -2,10 +2,9 @@
   "expo": {
     "name": "Lumina Vietii",
     "slug": "lumina-vietii",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "luminavietii",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -16,15 +15,16 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.nutujean.luminavietii",
-      "buildNumber": "6"
+      "buildNumber": "7"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.nutujean.luminavietii",
-      "versionCode": 6
+      "versionCode": 7,
+      "jsEngine": "jsc"
     },
     "extra": {
       "API_URL": "https://lumina-vietii-backend.onrender.com/api/user",
