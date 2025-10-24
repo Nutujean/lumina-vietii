@@ -3,7 +3,6 @@
   "main": "expo-router/entry",
   "version": "1.0.6",
   "scripts": {
-    "start": "expo start","scripts": {
   "start": "expo start",
   "postinstall": "patch-package"
 }
