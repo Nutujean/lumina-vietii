@@ -2,7 +2,7 @@
   "expo": {
     "name": "Lumina Vietii",
     "slug": "lumina-vietii",
-    "version": "1.0.7",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,23 +11,24 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.nutujean.luminavietii",
-      "buildNumber": "7"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.nutujean.luminavietii",
-      "versionCode": 7,
-      "jsEngine": "jsc"
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "API_URL": "https://lumina-vietii-backend.onrender.com/api/user",
       "eas": {
         "projectId": "d0078dfd-ff1f-4604-94a3-25b4b008aa31"
       }
