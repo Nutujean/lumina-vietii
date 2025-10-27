@@ -10,7 +10,8 @@
     "lint": "expo lint",
     "postinstall": "patch-package",
     "eas-install": "npm install --legacy-peer-deps",
-    "prebuild": "npm run eas-install"
+    "prebuild": "npm run eas-install",
+    "eas-build-pre-install": "npm install --legacy-peer-deps"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
