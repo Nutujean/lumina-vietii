@@ -2,37 +2,33 @@
   "expo": {
     "name": "Lumina Vietii",
     "slug": "lumina-vietii",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "scheme": "luminavietii",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
+      "package": "com.nutujean.luminavietii",
+      "versionCode": 113,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.nutujean.luminavietii",
-      "versionCode": 1
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      }
     },
     "extra": {
       "eas": {
         "projectId": "d0078dfd-ff1f-4604-94a3-25b4b008aa31"
       }
     },
-    "owner": "nutujean"
+    "owner": "nutujean",
+    "updates": {
+      "enabled": false
+    }
   }
 }
+
